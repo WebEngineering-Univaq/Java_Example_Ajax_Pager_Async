@@ -1,0 +1,6 @@
+{"totpages":${totpages},"curpage":${curpage},"pagedata":[
+<#list resultlist as result>            
+    {"number":${result.number}, "grade":${result.grade}}<#if (result_has_next)>,</#if>
+
+</#list>   
+]}

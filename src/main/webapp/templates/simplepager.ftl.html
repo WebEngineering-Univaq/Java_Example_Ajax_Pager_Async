@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+    <head>
+    <title>Javascript pagination</title>
+        <link rel="stylesheet" href="css/iw_examples.css"/>
+        <meta charset="utf-8"/>
+		
+    <style type="text/css">.pagerLink { 
+            background-color:white;
+            color: blue; border: 1px solid blue; 
+            margin: 1px; 
+            padding: 2px;
+            text-decoration: none; 
+        } 
+        .pagerCurrent { background-color:blue;
+             color: white; 
+             border: 1px solid blue; 
+             margin: 1px; 
+             padding:   4px; 
+        }
+    </style>
+        <script type="text/javascript" src="scripts/simplepager.js"></script>
+        <script type="text/javascript" src="scripts/simplepagerdata.js"></script>       
+    </head>
+    <body>
+        <h1 class="sezione">A simple Javascript pager</h1>
+    <p>In this example, paging is performed client-side with
+        Javascript, which queries the server via AJAX
+        to retrieve the data pages and create the pager.</p>
+    <p>An important detail, however, is that the document is
+        designed to support also server side paging: indeed, when
+        loaded, it displays the first page of data and a set of static
+        links to load the next ones, sending the page number as a
+        parameter to the server.</p>
+    <p>The script, if activated, replaces "on the fly" the
+        server-side paging structures with the client-side ones. In
+        this way, we need to develop the server support for two types
+        of pagination (i.e., the server must be able to return complete
+        pages or just blocks of data to be inserted in the page), but
+        the user can always make use of the best available pagination
+        mechanism.</p>
+    <p>Go to page:         
+        <span id="paging">
+            <#list 1..totpages as page>
+            <#if (page == curpage)>
+            <span class="pagerCurrent">${page}</span>
+            <#else>
+            <a class="pagerLink" href="?page=${page}">${page}</a>
+            </#if>       
+            </#list>
+        </span>
+    </p>
+
+    <table border="1" id="voti">
+        <tr><th>Number</th><th>Grade</th></tr>
+        <#list resultlist as result>            
+        <tr><td>${result.number}</td><td>${result.grade}</td></tr>
+        </#list>
+    </table>
+
+</body>
+</html>

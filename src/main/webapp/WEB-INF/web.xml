@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <servlet>
+        <servlet-name>SimpleAjaxPager</servlet-name>
+        <servlet-class>org.univaq.f4i.iw.examples.SimpleAjaxPager</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SimpleAjaxPager</servlet-name>
+        <url-pattern>/SimpleAjaxPager</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <context-param>
+        <param-name>view.template_directory</param-name>
+        <param-value>templates</param-value>
+    </context-param>
+    <context-param>
+        <param-name>view.data.author</param-name>
+        <param-value>Giuseppe Della Penna</param-value>
+    </context-param>
+    <context-param>
+        <param-name>view.encoding</param-name>
+        <param-value>ISO-8859-1</param-value>
+    </context-param>
+     <context-param>
+        <param-name>view.debug_mode</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>view.number_format</param-name>
+        <param-value>0</param-value>
+    </context-param>
+    <context-param>
+        <param-name>view.error_template</param-name>
+        <param-value>errore.ftl.html</param-value>
+    </context-param>
+    <welcome-file-list>
+        <welcome-file>SimpleAjaxPager</welcome-file>
+    </welcome-file-list>
+</web-app>
