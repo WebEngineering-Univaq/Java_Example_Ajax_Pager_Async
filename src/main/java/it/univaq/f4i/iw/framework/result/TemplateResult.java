@@ -15,7 +15,6 @@
  */
 package it.univaq.f4i.iw.framework.result;
 
-import freemarker.cache.JakartaWebappTemplateLoader;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.core.JSONOutputFormat;
 import freemarker.core.XMLOutputFormat;
@@ -59,7 +58,7 @@ public class TemplateResult {
     }
 
     private void init() {
-        cfg = new Configuration(Configuration.VERSION_2_3_32);
+        cfg = new Configuration(Configuration.VERSION_2_3_33);
         //impostiamo l'encoding di default per l'input e l'output
         //set the default input and outpout encoding
         String encoding = "utf-8";
@@ -73,10 +72,10 @@ public class TemplateResult {
         //set the (context relative) directory for template loading
         if (context.getInitParameter("view.template_directory") != null) {
             //cfg.setServletContextForTemplateLoading(context, context.getInitParameter("view.template_directory"));
-            cfg.setTemplateLoader(new JakartaWebappTemplateLoader(context, context.getInitParameter("view.template_directory"))); //patch se usato con JakartaEE
+            cfg.setTemplateLoader(new freemarker.ext.jakarta.servlet.WebappTemplateLoader(context, context.getInitParameter("view.template_directory"))); //patch se usato con JakartaEE
         } else {
             //cfg.setServletContextForTemplateLoading(context, "templates");
-            cfg.setTemplateLoader(new JakartaWebappTemplateLoader(context, "templates")); //patch se usato con JakartaEE
+            cfg.setTemplateLoader(new freemarker.ext.jakarta.servlet.WebappTemplateLoader(context, "templates")); //patch se usato con JakartaEE
         }
 
         //impostiamo un handler per gli errori nei template - utile per il debug
@@ -101,7 +100,7 @@ public class TemplateResult {
 //        cfg.setObjectWrapper(owb.build());
         //versione corretta per gestire i tipi java.time 
         //patched version to handle java.time types
-        Java8ObjectWrapper ow = new Java8ObjectWrapper(Configuration.VERSION_2_3_32);
+        Java8ObjectWrapper ow = new Java8ObjectWrapper(Configuration.VERSION_2_3_33);
         ow.setDefaultDateType(TemplateDateModel.DATETIME);
         ow.setForceLegacyNonListCollections(false);
         cfg.setObjectWrapper(ow);
