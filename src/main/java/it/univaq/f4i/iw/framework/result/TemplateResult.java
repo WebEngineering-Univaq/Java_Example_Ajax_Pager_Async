@@ -15,11 +15,11 @@
  */
 package it.univaq.f4i.iw.framework.result;
 
+import freemarker.cache.JakartaWebappTemplateLoader;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.core.JSONOutputFormat;
 import freemarker.core.XMLOutputFormat;
 import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.TemplateDateModel;
 import freemarker.template.TemplateException;
@@ -30,17 +30,18 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import no.api.freemarker.java8.Java8ObjectWrapper;
 
 /**
  *
@@ -58,7 +59,7 @@ public class TemplateResult {
     }
 
     private void init() {
-        cfg = new Configuration(Configuration.VERSION_2_3_26);
+        cfg = new Configuration(Configuration.VERSION_2_3_32);
         //impostiamo l'encoding di default per l'input e l'output
         //set the default input and outpout encoding
         String encoding = "utf-8";
@@ -71,9 +72,11 @@ public class TemplateResult {
         //impostiamo la directory (relativa al contesto) da cui caricare i templates
         //set the (context relative) directory for template loading
         if (context.getInitParameter("view.template_directory") != null) {
-            cfg.setServletContextForTemplateLoading(context, context.getInitParameter("view.template_directory"));
+            //cfg.setServletContextForTemplateLoading(context, context.getInitParameter("view.template_directory"));
+            cfg.setTemplateLoader(new JakartaWebappTemplateLoader(context, context.getInitParameter("view.template_directory"))); //patch se usato con JakartaEE
         } else {
-            cfg.setServletContextForTemplateLoading(context, "templates");
+            //cfg.setServletContextForTemplateLoading(context, "templates");
+            cfg.setTemplateLoader(new JakartaWebappTemplateLoader(context, "templates")); //patch se usato con JakartaEE
         }
 
         //impostiamo un handler per gli errori nei template - utile per il debug
@@ -92,10 +95,16 @@ public class TemplateResult {
 
         //impostiamo il gestore degli oggetti - trasformerà in hash i Java beans
         //set the object handler that allows us to "view" Java beans as hashes
-        DefaultObjectWrapperBuilder owb = new DefaultObjectWrapperBuilder(Configuration.VERSION_2_3_26);
-        owb.setForceLegacyNonListCollections(false);
-        owb.setDefaultDateType(TemplateDateModel.DATETIME);
-        cfg.setObjectWrapper(owb.build());
+//        DefaultObjectWrapperBuilder owb = new DefaultObjectWrapperBuilder(Configuration.VERSION_2_3_26);
+//        owb.setForceLegacyNonListCollections(false);
+//        owb.setDefaultDateType(TemplateDateModel.DATETIME);
+//        cfg.setObjectWrapper(owb.build());
+        //versione corretta per gestire i tipi java.time 
+        //patched version to handle java.time types
+        Java8ObjectWrapper ow = new Java8ObjectWrapper(Configuration.VERSION_2_3_32);
+        ow.setDefaultDateType(TemplateDateModel.DATETIME);
+        ow.setForceLegacyNonListCollections(false);
+        cfg.setObjectWrapper(ow);
 
         //classi opzionali che permettono di riempire ogni data model con dati generati dinamicamente
         //optional classes to automatically fill every data model with dynamically generated data
@@ -127,7 +136,7 @@ public class TemplateResult {
 
         //iniettiamo alcuni dati di default nel data model
         //inject some default data in the data model
-        default_data_model.put("compiled_on", Calendar.getInstance().getTime()); //data di compilazione del template
+        default_data_model.put("compiled_on", LocalDateTime.now()); //data di compilazione del template
         default_data_model.put("outline_tpl", context.getInitParameter("view.outline_template")); //eventuale template di outline
 
         //aggiungiamo altri dati di inizializzazione presi dal web.xml
