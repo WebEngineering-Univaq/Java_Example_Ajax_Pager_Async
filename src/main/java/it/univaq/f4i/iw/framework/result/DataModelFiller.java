@@ -20,8 +20,8 @@
 package it.univaq.f4i.iw.framework.result;
 
 import java.util.Map;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
