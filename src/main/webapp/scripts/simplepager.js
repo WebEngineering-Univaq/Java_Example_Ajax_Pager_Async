@@ -91,8 +91,7 @@ function makePageLink(page) {
     //note: thanks to the closure, the page variable used in the created function
     //is set to the page value passed to makePageLink
     link.onclick = function () {
-        //switchPageAsync(page); //asynchronous version
-        switchPage(page);
+        switchPage(page);         
     };
     //l'href del link è nullo
     //the link href is null
@@ -138,37 +137,46 @@ function updatePager(id, page) {
 }
 
 //cambia la pagina della tebella correntemente visualizzata
-//chenges the table page currently displayed
+//changes the table page currently displayed
 function switchPage(page) {
     //acquisizione dei dati
     //load the data
-    data = getPageData(page);
-    //visualizzazione del nuovo set di righe
-    //diaplay the rows
-    updateTable("voti", data);
-    //aggiornamento dei link di paginazione
-    //update the pager
-    updatePager("paging", page);
-}
 
-//asynchronous version
-function switchPageAsync(page) {
-    //acquisizione dei dati
-    //load the data
-    getPageDataAsync(page).then(data => {
-        //console.log("dati ricevuti per la pagina "+page);
+    const mode = document.querySelector('input[name="mode"]:checked').value;
+    if (mode === "sync") {
+        console.log(" richiesta sincrona XMLHttpRequest per la pagina " + page);
+        data = getPageDataXHRSync(page);
+        //visualizzazione del nuovo set di righe
+        //diaplay the rows
         updateTable("voti", data);
+        //aggiornamento dei link di paginazione
+        //update the pager
         updatePager("paging", page);
-    }).catch(error => {
-        alert(error);
-    });
+    } else {
+        let data_promise = null;
+        if (mode === "fetch") {
+            console.log(" richiesta asincrona Fetch per la pagina " + page);
+            data_promise = getPageDataFetch(page);
+        } else if (mode === "await") {
+            console.log(" richiesta asincrona Fetch+await per la pagina " + page);
+            data_promise = getPageDataFetchAwait(page);
+        } else /* (mode === "xhr") */ {
+            console.log(" richiesta asincrona XMLHttpRequest per la pagina " + page);
+            data_promise = getPageDataXHRAsync(page);
+        }
+        data_promise.then(data => {
+            updateTable("voti", data);
+            updatePager("paging", page);
+        }).catch(error => {
+            alert(error);
+        });
+    }
 }
 
 //inizializzazione dello script
 //script initialization
 function init() {
-    //switchPageAsync(1);  //asynchronous version
-    switchPage(1); 
+    switchPage(1);
 }
 
 window.onload = init;
